@@ -137,26 +137,6 @@ def _processBlockDims(dimOrBlockDims):
 
     return dmDim, gateDim, blockDims
 
-#    dim = 0
-#    dmDim = 0 # dimension of density matrix
-#    dmiToVi = {} # density matrix index (2-tuple) to vectorized density matrix index (integer) mapping
-#
-#    for blockDim in stateSpaceDims:
-#
-#        dmDim += blockDim
-#
-#    for k,blockDim in enumerate(stateSpaceDims):
-#        for i in range(dmDim,dmDim+blockDim):
-#            for j in range(dmDim,dmDim+blockDim):
-#                dmiToVi[ (i,j) ] = dim
-#                dim += 1
-#        dmDim += blockDim
-#        # Note: above loop performs dim += blockDim**2  -- the gate basis has a matrix unit
-#        # for each element of each tensor-product-block of the density matrix
-#
-#    #return dmiToVi, dmDim, dim  #Note dim == len(dmiToVi)
-#    return dmDim, dim
-
 def basis_longname(basis, dimOrBlockDims=None):
     """
     Get the "long name" for a particular basis,
@@ -193,7 +173,6 @@ def basis_longname(basis, dimOrBlockDims=None):
     elif basis == "qt":
         return "Qutrit"
     else: return "?Unknown?"
-
 
 def basis_element_labels(basis, dimOrBlockDims, maxWeight=None):
     """
