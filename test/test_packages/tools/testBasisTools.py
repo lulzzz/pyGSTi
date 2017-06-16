@@ -4,13 +4,10 @@ import numpy as np
 import scipy
 import pygsti
 
-import pygsti.tools.basistools as basistools
+import pygsti.tools.basistools       as basistools
+import pygsti.tools.lindbladiantools as lindbladiantools
 
 class BasisBaseTestCase(BaseTestCase):
-
-    ###########################################################
-    ## BASIS TOOLS TESTS     ##################################
-    ###########################################################
 
     def test_expand_contract(self):
         # matrix that operates on 2x2 density matrices, but only on the 0-th and 3-rd
@@ -271,7 +268,7 @@ class BasisBaseTestCase(BaseTestCase):
                                         [ 0,  0,  0,  0]]
                                        )
 
-        self.assertArraysAlmostEqual(basistools.hamiltonian_to_lindbladian(np.zeros(shape=(2,2))),
+        self.assertArraysAlmostEqual(lindbladiantools.hamiltonian_to_lindbladian(np.zeros(shape=(2,2))),
                                      expectedLindbladian)
 
     def test_vec_to_stdmx(self):
@@ -310,15 +307,6 @@ class BasisBaseTestCase(BaseTestCase):
          [ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,],
          [ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,]])
         self.assertArraysAlmostEqual(gate,expected)
-
-
-
-
-
-
-
-
-
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
