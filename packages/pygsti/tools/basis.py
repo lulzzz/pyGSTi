@@ -76,22 +76,21 @@ class Basis(object):
             return Basis.Constructors[basisname](dim)
         raise NotImplementedError('No instructions to create basis: {} {}'.format(basisname, dim))
 
-#@memoize
-def get_conversion_mx(from_basis, to_basis):
-    return _np.dot(to_basis.get_from_std(), from_basis.get_to_std())
-
-def build_basis(basis, dimOrBlockDims=None):
+def build_basis(basis, dimOrBlockDims):
     if isinstance(basis, Basis):
         return basis
     else:
         return Basis.create(basis, dimOrBlockDims)
 
+def get_conversion_mx(from_basis, to_basis, dimOrBlockDims):
+    from_basis = build_basis(from_basis, dimOrBlockDims)
+    to_basis   = build_basis(to_basis, dimOrBlockDims)
+    return _np.dot(to_basis.get_from_std(), from_basis.get_to_std())
+
 def change_basis(mx, from_basis, to_basis, dimOrBlockDims):
     if isinstance(dimOrBlockDims, list):
         dimOrBlockDims = tuple(dimOrBlockDims)
-    from_basis = build_basis(from_basis, dimOrBlockDims)
-    to_basis   = build_basis(to_basis, dimOrBlockDims)
-    return _np.dot(mx, get_conversion_mx(from_basis, to_basis))
+    return _np.dot(get_conversion_mx(from_basis, to_basis, dimOrBlockDims), mx)
 
 @parameterized
 def basis_constructor(f, name):
