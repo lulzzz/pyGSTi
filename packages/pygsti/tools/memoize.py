@@ -4,7 +4,7 @@ from functools import partial, wraps
 def memoize(obj):
     cache = obj.cache = {}
 
-    @wraps(obj)
+    #@wraps(obj)
     def memoizer(*args, **kwargs):
         if len(kwargs) > 0:
             raise ValueError('Cannot currently memoize on kwargs')

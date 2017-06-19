@@ -1,13 +1,24 @@
 from collections  import OrderedDict
+from functools    import wraps
+
 from numpy.linalg import inv as _inv
 import numpy as _np
 
-from memoize import memoize
+from .memoize       import memoize
+from .parameterized import parameterized
 
 class Basis(object):
     BasisDict = dict()
+    DefaultConstructors = dict()
 
     def __init__(self, name, matrices, longname=None):
+        assert len(matrices) > 0, 'Need at least one matrix in basis'
+
+        self.shape = matrices[0].shape # wont change ( I think? )
+        if (name, self.shape) in Basis.BasisDict:
+            self = Basis.get(name, shape=None)
+            return
+
         self.name = name
         if longname is None:
             self.longname = self.name
@@ -15,7 +26,6 @@ class Basis(object):
             self.longname = longname
 
         self._mxDict = OrderedDict()
-        assert len(matrices) > 0, 'Need at least one matrix in basis'
         for i, mx in enumerate(matrices):
             if isinstance(mx, tuple):
                 label, mx = mx
@@ -23,9 +33,6 @@ class Basis(object):
                 label = 'M{}'.format(i)
             self._mxDict[label] = mx
         Basis.add(self)
-
-    def __hash__(self):
-        return hash((self.name, self.shape()))
 
     def __str__(self):
         return '{} Basis : {}'.format(self.longname, ', '.join(self.labels()))
@@ -38,10 +45,6 @@ class Basis(object):
             if t != 0:
                 return False
         return True
-
-    @memoize
-    def shape(self):
-        return self.matrices()[0].shape
 
     @memoize
     def matrices(self):
@@ -61,7 +64,7 @@ class Basis(object):
 
     @staticmethod
     def add(basis):
-        Basis.BasisDict[(basis.name, basis.shape())] = basis
+        Basis.BasisDict[(basis.name, basis.shape)] = basis
 
     @staticmethod
     def get(basisname, shape=None):
@@ -81,3 +84,13 @@ def build_basis(basis, shape=None):
         return basis
     else:
         return Basis.get(basis, shape)
+
+@parameterized
+def basis_constructor(matrix_creator, name):
+    Basis.DefaultConstructors[name] = matrix_creator #memoize(matrix_creator)
+    def wrapper(*args, **kwargs):
+        assert len(args) == 1
+        matrices = Basis.DefaultConstructors[name](*args, **kwargs)
+        basis    = Basis(name, matrices)
+        return matrices
+    return wrapper
