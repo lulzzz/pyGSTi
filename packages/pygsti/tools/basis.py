@@ -8,20 +8,12 @@ from .memoize       import memoize
 from .parameterized import parameterized
 
 class Basis(object):
-    BasisDict = dict()
     Constructors = dict()
 
     def __init__(self, name, matrices, longname=None):
         assert len(matrices) > 0, 'Need at least one matrix in basis'
 
         self.shape = matrices[0].shape # wont change ( I think? )
-        self.dim   = int(round(_np.sqrt(self.shape[0])))
-        '''
-        if (name, self.shape) in Basis.BasisDict:
-            self = Basis.get(name, shape=self.shape)
-            return
-        '''
-
         self.name = name
         if longname is None:
             self.longname = self.name
@@ -37,8 +29,6 @@ class Basis(object):
             self._mxDict[label] = mx
         self.matrices = list(self._mxDict.values())
         self.labels = list(self._mxDict.keys())
-
-        Basis.add(self)
 
     def __str__(self):
         return '{} Basis : {}'.format(self.longname, ', '.join(self.labels()))
@@ -79,16 +69,6 @@ class Basis(object):
         return _inv(self.get_to_std())
 
     @staticmethod
-    def add(basis):
-        Basis.BasisDict[(basis.name, basis.dim)] = basis
-
-    @staticmethod
-    def get(basisname, dim):
-        if (basisname, dim) not in Basis.BasisDict:
-            Basis.BasisDict[(basisname, dim)] = Basis.create(basisname, dim)
-        return Basis.BasisDict[(basisname, dim)]
-
-    @staticmethod
     def create(basisname, dim):
         if basisname in Basis.Constructors:
             return Basis.Constructors[basisname](dim)
@@ -103,7 +83,6 @@ def build_basis(basis, dimOrBlockDims=None):
         return basis
     else:
         return Basis.create(basis, dimOrBlockDims)
-        #return Basis.get(basis, dimOrBlockDims)
 
 def change_basis(mx, from_basis, to_basis, dimOrBlockDims):
     if isinstance(dimOrBlockDims, list):
