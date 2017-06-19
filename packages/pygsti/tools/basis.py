@@ -71,9 +71,9 @@ class Basis(object):
         return _inv(self.get_to_std())
 
     @staticmethod
-    def create(basisname, dim):
+    def create(basisname, dim, *args, **kwargs):
         if basisname in Basis.Constructors:
-            return Basis.Constructors[basisname](dim)
+            return Basis.Constructors[basisname](dim, *args, **kwargs)
         raise NotImplementedError('No instructions to create basis: {} {}'.format(basisname, dim))
 
 def build_basis(basis, dimOrBlockDims):

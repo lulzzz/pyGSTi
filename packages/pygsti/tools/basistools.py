@@ -756,9 +756,7 @@ def pp_matrices(dim, maxWeight=None):
             M = _np.kron(M,sigmaVec[i])
         matrices.append(M)
 
-    return Basis('pp', matrices)
-
-
+    return matrices
 
 @basis_constructor('qt')
 def qt_matrices(dim, selected_pp_indices=[0,5,10,11,1,2,3,6,7]):
@@ -814,6 +812,7 @@ def qt_matrices(dim, selected_pp_indices=[0,5,10,11,1,2,3,6,7]):
 
 
 def basis_matrices(basis, dimOrBlockDims, maxWeight=None):
+    return Basis.create(basis, dimOrBlockDims, maxWeight=maxWeight)
     """
     Get the elements of the specifed basis-type which
     spans the density-matrix space given by dimOrBlockDims.
